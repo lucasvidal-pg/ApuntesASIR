@@ -78,7 +78,7 @@
             <div class="flex items-center justify-between bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50">
                 <div class="flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-xs font-medium text-slate-300">(▀̿Ĺ̯▀̿ ̿)</span>
+                    <span class="text-xs font-medium text-slate-300">Primer Examen</span>
                 </div>
             </div>
         </div>
@@ -115,7 +115,7 @@
             </div>
 
             <!-- Search Bar -->
-            <div class="relative w-full sm:w-64">
+            <div id="searchContainer" class="relative w-full sm:w-64">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-500"></i>
                 <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar apunte..." 
                        class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-sky-500 transition placeholder:text-slate-600">
@@ -125,11 +125,11 @@
         <!-- Main Workspace Body -->
         <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
 
-            <!-- Title & PDF Count Bar -->
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <!-- Dynamic Header Bar for PDF Documents / Info View -->
+            <div id="sectionHeader" class="flex items-center justify-between border-b border-slate-800/80 pb-3">
                 <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-folder-open text-sky-400 text-sm"></i>
-                    <h3 class="text-sm font-bold text-white">Documentos - 1er Examen</h3>
+                    <i id="sectionHeaderIcon" class="fa-solid fa-folder-open text-sky-400 text-sm"></i>
+                    <h3 id="sectionHeaderTitle" class="text-sm font-bold text-white">Documentos - 1er Examen</h3>
                 </div>
                 <span id="itemsCounter" class="text-xs font-mono-code text-slate-500">0 PDFs</span>
             </div>
@@ -149,6 +149,50 @@
                     A la espera de añadir los archivos PDF correspondientes al 1er examen de esta asignatura.
                 </p>
             </div>
+
+            <!-- Info View / Legal Disclaimer Panel -->
+            <div id="infoView" class="hidden flex-col space-y-6 max-w-4xl mx-auto py-4">
+                <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl">
+                    <div class="flex items-center space-x-3 text-amber-400 border-b border-amber-500/20 pb-4">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                        <h3 class="text-lg font-bold text-white tracking-wide">Descargo de Responsabilidad y Términos de Uso</h3>
+                    </div>
+                    
+                    <div class="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-4 font-normal">
+                        <p>
+                            Al acceder, consultar, descargar o utilizar de cualquier forma los materiales, resúmenes, esquemas, guías o apuntes alojados en este repositorio web, el usuario acepta de manera explícita, incondicional e irrevocable los términos expresados en esta exención formal de responsabilidad.
+                        </p>
+                        
+                        <p class="font-semibold text-amber-200/90">
+                            1. Carácter Puramente Orientativo e Incompletitud:
+                        </p>
+                        <p>
+                            Todos los documentos compartidos en esta plataforma han sido elaborados de forma voluntaria, personal y colaborativa por alumnos del módulo. Por tanto, constituyen meros borradores de estudio y sintetizan el temario bajo el criterio individual de sus autores. En ningún caso estos resúmenes sustituyen a las clases impartidas por el claustro docente, la bibliografía oficial del ciclo, ni los temarios publicados de manera oficial por el centro educativo. No se garantiza la veracidad, actualización, exhaustividad ni exactitud técnica de los conceptos aquí recogidos.
+                        </p>
+
+                        <p class="font-semibold text-amber-200/90">
+                            2. Exención Total de Responsabilidad por Resultados Académicos:
+                        </p>
+                        <p>
+                            Los creadores, administradores y colaboradores de esta página web se eximen categóricamente de cualquier tipo de responsabilidad legal, académica, moral o personal derivada del uso que los estudiantes hagan de esta información. Si un alumno decide estudiar de forma exclusiva o parcial mediante estos resúmenes y posteriormente obtiene una calificación insuficiente, suspende exámenes parciales o finales, pierde la evaluación continua, suspende el curso académico o no adquiere las competencias necesarias, la responsabilidad recaerá única y exclusivamente sobre dicho estudiante.
+                        </p>
+
+                        <p class="font-semibold text-amber-200/90">
+                            3. Recomendación Oficial de Estudio:
+                        </p>
+                        <p>
+                            Se recomienda encarecidamente a todo el alumnado contrastar cada concepto, comando, topología y configuración teórica/práctica con los libros de texto, las presentaciones oficiales de los profesores y los apuntes tomados individualmente en el aula. Utiliza esta web como una herramienta complementaria de repaso rápido, nunca como tu única fuente de aprendizaje para preparar los exámenes del curso.
+                        </p>
+                    </div>
+
+                    <div class="pt-2 text-right">
+                        <span class="inline-block text-[11px] font-mono-code text-amber-400/80 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">
+                            Estudia bajo tu propio riesgo y contrasta siempre con la teoría oficial.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -186,13 +230,14 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Official Technical Modules for 1st Year ASIR
+        // Official Technical Modules for 1st Year ASIR + Info Section
         const SUBJECTS = [
             { id: 'redes', name: 'Redes Locales', code: 'RL', icon: 'fa-network-wired', color: 'text-sky-400', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20' },
             { id: 'iso', name: 'Implantación de Sistemas Operativos', code: 'ISO', icon: 'fa-desktop', color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20' },
             { id: 'gbd', name: 'Gestión de Bases de Datos', code: 'GBD', icon: 'fa-database', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' },
             { id: 'lmsgi', name: 'Lenguajes de Marcas', code: 'LMSGI', icon: 'fa-code', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' },
-            { id: 'fh', name: 'Fundamentos de Hardware', code: 'FH', icon: 'fa-microchip', color: 'text-indigo-400', bgColor: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20' }
+            { id: 'fh', name: 'Fundamentos de Hardware', code: 'FH', icon: 'fa-microchip', color: 'text-indigo-400', bgColor: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20' },
+            { id: 'info', name: 'Información', code: 'INFO', icon: 'fa-circle-info', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' }
         ];
 
         /*
@@ -209,7 +254,8 @@
             'iso': [],
             'gbd': [],
             'lmsgi': [],
-            'fh': []
+            'fh': [],
+            'info': []
         };
 
         let currentSubjectId = 'redes';
@@ -226,6 +272,8 @@
             container.innerHTML = SUBJECTS.map(subj => {
                 const isActive = subj.id === currentSubjectId;
                 const count = (notesData[subj.id] || []).length;
+                const badgeContent = subj.id === 'info' ? '!' : count;
+
                 return `
                     <button onclick="loadSubject('${subj.id}')" 
                             class="w-full flex items-center justify-between p-2.5 rounded-xl font-medium text-xs transition duration-150 ${
@@ -240,7 +288,7 @@
                             <span class="truncate">${subj.name}</span>
                         </div>
                         <span class="ml-2 font-mono-code text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-sky-500/30 text-sky-200' : 'bg-slate-800 text-slate-500'}">
-                            ${count}
+                            ${badgeContent}
                         </span>
                     </button>
                 `;
@@ -256,9 +304,41 @@
             document.getElementById('currentSubjectTitle').innerText = subject.name;
             document.getElementById('currentSubjectIcon').className = `fa-solid ${subject.icon} text-lg ${subject.color}`;
             
-            document.getElementById('searchInput').value = '';
+            const searchContainer = document.getElementById('searchContainer');
+            const infoView = document.getElementById('infoView');
+            const pdfGrid = document.getElementById('pdfGrid');
+            const emptyState = document.getElementById('emptyState');
+            const sectionHeader = document.getElementById('sectionHeader');
+
+            if (subjectId === 'info') {
+                // Show Info View
+                searchContainer.classList.add('hidden');
+                pdfGrid.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                infoView.classList.remove('hidden');
+                infoView.classList.add('flex');
+
+                document.getElementById('sectionHeaderTitle').innerText = 'Aviso Importante';
+                document.getElementById('sectionHeaderIcon').className = 'fa-solid fa-shield-halved text-amber-400 text-sm';
+                document.getElementById('itemsCounter').innerText = 'Términos y Condiciones';
+                document.getElementById('currentSubjectSub').innerText = 'Información general del sitio';
+            } else {
+                // Show PDF Views
+                searchContainer.classList.remove('hidden');
+                infoView.classList.add('hidden');
+                infoView.classList.remove('flex');
+                pdfGrid.classList.remove('hidden');
+
+                document.getElementById('sectionHeaderTitle').innerText = 'Documentos - 1er Examen';
+                document.getElementById('sectionHeaderIcon').className = 'fa-solid fa-folder-open text-sky-400 text-sm';
+                document.getElementById('currentSubjectSub').innerText = 'Apuntes para el 1er Examen';
+                
+                document.getElementById('searchInput').value = '';
+                renderNotesGrid();
+            }
+
             renderSubjectNav();
-            renderNotesGrid();
 
             const sidebar = document.getElementById('sidebar');
             if (!sidebar.classList.contains('-translate-x-full')) {
@@ -268,6 +348,8 @@
 
         // Render PDF Grid based on selected Subject
         function renderNotesGrid(filterQuery = '') {
+            if (currentSubjectId === 'info') return;
+
             const grid = document.getElementById('pdfGrid');
             const emptyState = document.getElementById('emptyState');
             let items = notesData[currentSubjectId] || [];
