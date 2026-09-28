@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apuntes ASIR - 1º Curso</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono-code { font-family: 'Fira Code', monospace; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row antialiased selection:bg-sky-500 selection:text-white">
+
+    <!-- Mobile Navigation Header -->
+    <div class="md:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-sky-500/10 rounded-lg text-sky-400 border border-sky-500/20">
+                <i class="fa-solid fa-server text-lg"></i>
+            </div>
+            <span class="font-bold text-base tracking-tight font-mono-code text-white">Apuntes ASIR <span class="text-sky-400">1º</span></span>
+        </div>
+        <button id="mobileMenuBtn" class="p-2 text-slate-400 hover:text-white focus:outline-none">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-50 w-72 bg-slate-900 border-r border-slate-800 flex flex-col h-screen overflow-hidden">
+        <!-- Logo & Header -->
+        <div class="p-5 border-b border-slate-800 hidden md:flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-sky-500/10 rounded-xl text-sky-400 border border-sky-500/30">
+                    <i class="fa-solid fa-folder-tree text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base font-mono-code text-white tracking-wide">Apuntes ASIR</h1>
+                    <p class="text-xs text-slate-400">1º Curso Académico</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Exam Badge -->
+        <div class="p-3.5 bg-slate-950/40 border-b border-slate-800/80">
+            <div class="flex items-center justify-between bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-xs font-medium text-slate-300">Primer Examen</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Subjects List -->
+        <div class="p-4 overflow-y-auto flex-1 space-y-1">
+            <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-2 mb-2 font-mono-code">Asignaturas</p>
+            <nav id="subjectNavList" class="space-y-1">
+                <!-- Navigation items dynamically inserted -->
+            </nav>
+        </div>
+
+        <!-- System Footer Info -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/60">
+            <div class="flex items-center space-x-2 text-xs text-slate-500 font-mono-code">
+                <i class="fa-solid fa-code text-sky-400"></i>
+                <span>ASIR 1º - Repositorio de Apuntes</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-950">
+        <!-- Header Bar -->
+        <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10">
+            <div class="flex items-center space-x-3">
+                <div id="subjectHeaderIconContainer" class="p-2.5 bg-slate-800 text-sky-400 rounded-xl border border-slate-700">
+                    <i id="currentSubjectIcon" class="fa-solid fa-network-wired text-lg"></i>
+                </div>
+                <div>
+                    <h2 id="currentSubjectTitle" class="text-lg font-bold text-white tracking-tight">Redes Locales</h2>
+                    <p id="currentSubjectSub" class="text-xs text-slate-400">Apuntes para el 1er Examen</p>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-500"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar apunte..." 
+                       class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-sky-500 transition placeholder:text-slate-600">
+            </div>
+        </header>
+
+        <!-- Main Workspace Body -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+
+            <!-- Title & PDF Count Bar -->
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-folder-open text-sky-400 text-sm"></i>
+                    <h3 class="text-sm font-bold text-white">Documentos - 1er Examen</h3>
+                </div>
+                <span id="itemsCounter" class="text-xs font-mono-code text-slate-500">0 PDFs</span>
+            </div>
+
+            <!-- PDF Files Grid -->
+            <div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- PDF cards will appear here when configured in code -->
+            </div>
+
+            <!-- Clean Empty State Display -->
+            <div id="emptyState" class="hidden flex-col items-center justify-center p-12 bg-slate-900/30 border border-dashed border-slate-800/80 rounded-2xl text-center my-8">
+                <div class="p-4 bg-slate-900 rounded-full text-slate-600 mb-3 border border-slate-800">
+                    <i class="fa-regular fa-file-pdf text-3xl"></i>
+                </div>
+                <h4 class="text-slate-300 font-semibold text-sm">Sin PDFs configurados</h4>
+                <p class="text-slate-500 text-xs max-w-xs mt-1 leading-relaxed">
+                    A la espera de añadir los archivos PDF correspondientes al 1er examen de esta asignatura.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Static PDF Viewer Modal -->
+    <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-2 sm:p-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3 truncate">
+                    <div class="p-2 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 shrink-0">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="truncate">
+                        <h3 id="modalPdfTitle" class="text-slate-100 font-semibold text-xs sm:text-sm truncate">Documento PDF</h3>
+                        <p id="modalPdfSub" class="text-slate-400 text-[11px]">Visor de apuntes - 1er Examen</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <a id="modalDownloadBtn" download href="#" target="_blank" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition">
+                        <i class="fa-solid fa-download text-sky-400"></i>
+                        <span class="hidden sm:inline">Descargar</span>
+                    </a>
+                    <button onclick="closePdfModal()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Body (Iframe for PDF rendering) -->
+            <div class="flex-1 bg-slate-950 relative">
+                <iframe id="pdfIframe" class="w-full h-full border-none" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Official Technical Modules for 1st Year ASIR
+        const SUBJECTS = [
+            { id: 'redes', name: 'Redes Locales', code: 'RL', icon: 'fa-network-wired', color: 'text-sky-400', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20' },
+            { id: 'iso', name: 'Implantación de Sistemas Operativos', code: 'ISO', icon: 'fa-desktop', color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20' },
+            { id: 'gbd', name: 'Gestión de Bases de Datos', code: 'GBD', icon: 'fa-database', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' },
+            { id: 'lmsgi', name: 'Lenguajes de Marcas', code: 'LMSGI', icon: 'fa-code', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' },
+            { id: 'fh', name: 'Fundamentos de Hardware', code: 'FH', icon: 'fa-microchip', color: 'text-indigo-400', bgColor: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20' }
+        ];
+
+        /*
+         * Repository Data for PDFs (1er Examen)
+        */
+        const notesData = {
+            'redes': [
+                {
+                    title: 'tema 1 y 2 - Resumen',
+                    date: '1er Examen',
+                    url: 'tema1_2_resumenPAR.pdf'
+                }
+            ],
+            'iso': [],
+            'gbd': [],
+            'lmsgi': [],
+            'fh': []
+        };
+
+        let currentSubjectId = 'redes';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSubjectNav();
+            loadSubject('redes');
+            setupMobileMenu();
+        });
+
+        // Render Subject Navigation List in Sidebar
+        function renderSubjectNav() {
+            const container = document.getElementById('subjectNavList');
+            container.innerHTML = SUBJECTS.map(subj => {
+                const isActive = subj.id === currentSubjectId;
+                const count = (notesData[subj.id] || []).length;
+                return `
+                    <button onclick="loadSubject('${subj.id}')" 
+                            class="w-full flex items-center justify-between p-2.5 rounded-xl font-medium text-xs transition duration-150 ${
+                                isActive 
+                                    ? 'bg-sky-500/15 border border-sky-500/40 text-sky-300 font-semibold' 
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                            }">
+                        <div class="flex items-center space-x-2.5 truncate">
+                            <div class="p-1.5 rounded-lg ${subj.bgColor} ${subj.color} border ${subj.borderColor}">
+                                <i class="fa-solid ${subj.icon} text-xs"></i>
+                            </div>
+                            <span class="truncate">${subj.name}</span>
+                        </div>
+                        <span class="ml-2 font-mono-code text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-sky-500/30 text-sky-200' : 'bg-slate-800 text-slate-500'}">
+                            ${count}
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Switch Active Subject
+        function loadSubject(subjectId) {
+            currentSubjectId = subjectId;
+            const subject = SUBJECTS.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            document.getElementById('currentSubjectTitle').innerText = subject.name;
+            document.getElementById('currentSubjectIcon').className = `fa-solid ${subject.icon} text-lg ${subject.color}`;
+            
+            document.getElementById('searchInput').value = '';
+            renderSubjectNav();
+            renderNotesGrid();
+
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        // Render PDF Grid based on selected Subject
+        function renderNotesGrid(filterQuery = '') {
+            const grid = document.getElementById('pdfGrid');
+            const emptyState = document.getElementById('emptyState');
+            let items = notesData[currentSubjectId] || [];
+
+            if (filterQuery) {
+                items = items.filter(doc => doc.title.toLowerCase().includes(filterQuery.toLowerCase()));
+            }
+
+            document.getElementById('itemsCounter').innerText = `${items.length} PDF(s)`;
+
+            if (items.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+
+            grid.innerHTML = items.map((doc) => `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between group hover:border-sky-500/40 transition shadow-lg shadow-black/20">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono-code">
+                                <i class="fa-solid fa-file-pdf mr-1"></i>PDF
+                            </span>
+                            <span class="text-[10px] font-mono-code text-slate-500">${doc.date || '1er Examen'}</span>
+                        </div>
+                        <h4 class="text-slate-100 font-semibold text-xs leading-snug group-hover:text-sky-300 transition">
+                            ${escapeHtml(doc.title)}
+                        </h4>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-end space-x-2">
+                        <button onclick="openPdfModal('${escapeHtml(doc.title)}', '${doc.url}')" 
+                                class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-eye text-sky-400"></i>
+                            <span>Ver PDF</span>
+                        </button>
+                        <a href="${doc.url}" download target="_blank" 
+                           class="px-3 py-1.5 bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white rounded-lg text-xs font-medium transition flex items-center space-x-1.5">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Descargar</span>
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Live Search Filter
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            renderNotesGrid(query);
+        }
+
+        // Modal Handlers
+        function openPdfModal(title, url) {
+            const modal = document.getElementById('pdfModal');
+            document.getElementById('modalPdfTitle').innerText = title;
+            document.getElementById('modalDownloadBtn').href = url;
+            document.getElementById('pdfIframe').src = url;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdfIframe').src = '';
+            const modal = document.getElementById('pdfModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function setupMobileMenu() {
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
