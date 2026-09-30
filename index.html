@@ -87,7 +87,7 @@
 ⠀⠀⠀⠀⠀⠀⠀⠰⠶⠒⠒⠒⠒⠒⠲⠤⣄⡀⠀⠀⠀⠀⠀
 ⠀⠀⠀⣠⡖⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⣦⠀⠀⠀⠀
 ⠀⣠⣴⣿⠢⡄⠀⠀⠀⠀⠀⠀⠀⢀⣀⡀⠀⠀⠀⢤⠀⠀⠀
-⠬⣯⠁⢻⡄⠀⠀⠀⠀⠀⣰⢿⢺⣭⠳⣄⠀⠘⣧⠀⠀
+⡿⠬⣯⠁⢻⡄⠀⠀⠀⠀⠀⣰⢿⢺⣭⠳⣄⠀⠘⣧⠀⠀
 ⠀⠳⣇⣉⣠⡾⠡⠤⠤⠤⠄⠀⠻⣤⠌⠁⣠⠿⠀⠘⡇⠀
 ⠀⠀⠸⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠁ ⠀⠀⠀⢻⠀
 ⠀⠀ ⢘⡦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⠀⠀ ⠀⠀⢸⠀
@@ -136,7 +136,7 @@
             </div>
 
             <!-- Search Bar -->
-            <div class="relative w-full sm:w-64">
+            <div id="searchContainer" class="relative w-full sm:w-64">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-500"></i>
                 <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Buscar apunte..." 
                        class="w-full bg-slate-950 text-slate-200 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-sky-500 transition placeholder:text-slate-600">
@@ -147,7 +147,7 @@
         <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
 
             <!-- Title & Count Bar -->
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div id="contentHeaderBar" class="flex items-center justify-between border-b border-slate-800/80 pb-3">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-folder-open text-sky-400 text-sm"></i>
                     <h3 class="text-sm font-bold text-white">Documentos - 1er Examen</h3>
@@ -155,9 +155,11 @@
                 <span id="itemsCounter" class="text-xs font-mono-code text-slate-500">0 Archivos</span>
             </div>
 
-            <!-- Files Grid -->
-            <div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Cards will appear here when configured in code -->
+            <!-- Files Grid or Legal Info Container -->
+            <div id="mainContentContainer">
+                <div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Cards will appear here when configured in code -->
+                </div>
             </div>
 
             <!-- Clean Empty State Display -->
@@ -208,18 +210,19 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Official Technical Modules for 1st Year ASIR
+        // Official Technical Modules for 1st Year ASIR + Legal Info
         const SUBJECTS = [
             { id: 'redes', name: 'Redes Locales', code: 'RL', icon: 'fa-network-wired', color: 'text-sky-400', bgColor: 'bg-sky-500/10', borderColor: 'border-sky-500/20' },
             { id: 'iso', name: 'Implantación de Sistemas Operativos', code: 'ISO', icon: 'fa-desktop', color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/20' },
             { id: 'gbd', name: 'Gestión de Bases de Datos', code: 'GBD', icon: 'fa-database', color: 'text-amber-400', bgColor: 'bg-amber-500/10', borderColor: 'border-amber-500/20' },
             { id: 'lmsgi', name: 'Lenguajes de Marcas', code: 'LMSGI', icon: 'fa-code', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' },
-            { id: 'fh', name: 'Fundamentos de Hardware', code: 'FH', icon: 'fa-microchip', color: 'text-indigo-400', bgColor: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20' }
+            { id: 'fh', name: 'Fundamentos de Hardware', code: 'FH', icon: 'fa-microchip', color: 'text-indigo-400', bgColor: 'bg-indigo-500/10', borderColor: 'border-indigo-500/20' },
+            { id: 'legal', name: 'Información Legal', code: 'INFO', icon: 'fa-scale-balanced', color: 'text-rose-400', bgColor: 'bg-rose-500/10', borderColor: 'border-rose-500/20' }
         ];
 
         /*
          * Repository Data for Files (1er Examen)
-        */
+         */
         const notesData = {
             'redes': [
                 {
@@ -247,10 +250,18 @@
                     type: 'image'
                 }
             ],
-            'iso': [],
+            'iso': [
+                {
+                    title: 'Puertas lógicas',
+                    date: '1er Examen',
+                    url: 'puertaslogicas.jpeg',
+                    type: 'image'
+                }
+            ],
             'gbd': [],
             'lmsgi': [],
-            'fh': []
+            'fh': [],
+            'legal': []
         };
 
         let currentSubjectId = 'redes';
@@ -266,7 +277,7 @@
             const container = document.getElementById('subjectNavList');
             container.innerHTML = SUBJECTS.map(subj => {
                 const isActive = subj.id === currentSubjectId;
-                const count = (notesData[subj.id] || []).length;
+                const count = subj.id === 'legal' ? '' : (notesData[subj.id] || []).length;
                 return `
                     <button onclick="loadSubject('${subj.id}')" 
                             class="w-full flex items-center justify-between p-2.5 rounded-xl font-medium text-xs transition duration-150 ${
@@ -280,9 +291,10 @@
                             </div>
                             <span class="truncate">${subj.name}</span>
                         </div>
+                        ${subj.id === 'legal' ? '' : `
                         <span class="ml-2 font-mono-code text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-sky-500/30 text-sky-200' : 'bg-slate-800 text-slate-500'}">
                             ${count}
-                        </span>
+                        </span>`}
                     </button>
                 `;
             }).join('');
@@ -297,9 +309,21 @@
             document.getElementById('currentSubjectTitle').innerText = subject.name;
             document.getElementById('currentSubjectIcon').className = `fa-solid ${subject.icon} text-lg ${subject.color}`;
             
-            document.getElementById('searchInput').value = '';
+            const searchContainer = document.getElementById('searchContainer');
+            const contentHeaderBar = document.getElementById('contentHeaderBar');
+
+            if (subjectId === 'legal') {
+                searchContainer.style.display = 'none';
+                contentHeaderBar.style.display = 'none';
+                renderLegalContent();
+            } else {
+                searchContainer.style.display = 'block';
+                contentHeaderBar.style.display = 'flex';
+                document.getElementById('searchInput').value = '';
+                renderNotesGrid();
+            }
+
             renderSubjectNav();
-            renderNotesGrid();
 
             const sidebar = document.getElementById('sidebar');
             if (!sidebar.classList.contains('-translate-x-full')) {
@@ -307,8 +331,75 @@
             }
         }
 
+        // Render Legal Information View
+        function renderLegalContent() {
+            const container = document.getElementById('mainContentContainer');
+            const emptyState = document.getElementById('emptyState');
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 max-w-4xl mx-auto shadow-xl">
+                    <div class="border-b border-slate-800 pb-4 flex items-center space-x-3">
+                        <div class="p-2.5 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+                            <i class="fa-solid fa-scale-balanced text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white tracking-tight">Términos de Uso y Aviso de Exoneración de Responsabilidad</h3>
+                            <p class="text-xs text-slate-400">Condiciones legales y uso de los materiales de la plataforma</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 text-slate-300 text-xs sm:text-sm leading-relaxed">
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-slate-200 flex items-center space-x-2">
+                                <span class="text-rose-400 font-mono">1.</span>
+                                <span>Naturaleza colaborativa y educativa</span>
+                            </h4>
+                            <p class="text-slate-400 pl-4 border-l-2 border-slate-800">
+                                Los resúmenes, esquemas, apuntes y materiales compartidos en esta plataforma (en adelante, "los Materiales") han sido elaborados por estudiantes con un propósito meramente educativo, orientativo y de colaboración mutua para el ciclo formativo de ASIR. No constituyen material oficial de ningún centro educativo ni sustituyen a la bibliografía recomendada por los profesores.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-slate-200 flex items-center space-x-2">
+                                <span class="text-rose-400 font-mono">2.</span>
+                                <span>Exención de responsabilidad académica</span>
+                            </h4>
+                            <p class="text-slate-400 pl-4 border-l-2 border-slate-800">
+                                Los administradores y colaboradores de esta página no garantizan que los contenidos incluidos en los resúmenes sean exhaustivos, exactos o que recojan la totalidad de la materia que luego pueda ser objeto de evaluación en exámenes parciales, finales o de recuperación.<br><br>
+                                Si suspendes un examen o el ciclo entero, la responsabilidad recae única y exclusivamente sobre tu propio estudio, asistencia a clases y esfuerzo personal. El uso de estos apuntes es un complemento voluntario y bajo tu propia responsabilidad.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-slate-200 flex items-center space-x-2">
+                                <span class="text-rose-400 font-mono">3.</span>
+                                <span>Cambios en los temarios y normativas</span>
+                            </h4>
+                            <p class="text-slate-400 pl-4 border-l-2 border-slate-800">
+                                Los temarios, las tecnologías, las versiones de los sistemas operativos (Windows Server, Linux, etc.) y los criterios de evaluación pueden cambiar de un año académico a otro o según el criterio de cada docente. Es obligación del alumno contrastar la información con los apuntes oficiales proporcionados en clase.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <h4 class="font-bold text-slate-200 flex items-center space-x-2">
+                                <span class="text-rose-400 font-mono">4.</span>
+                                <span>Propiedad intelectual y uso adecuado</span>
+                            </h4>
+                            <p class="text-slate-400 pl-4 border-l-2 border-slate-800">
+                                Los apuntes subidos reflejan el esfuerzo de sus autores. Está prohibido utilizar este material con fines comerciales o de lucro. Si algún contenido vulnera derechos de autor o propiedad intelectual, rogamos que se pongan en contacto con nosotros para su retirada inmediata.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Render Grid based on selected Subject
         function renderNotesGrid(filterQuery = '') {
+            const container = document.getElementById('mainContentContainer');
+            container.innerHTML = `<div id="pdfGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>`;
             const grid = document.getElementById('pdfGrid');
             const emptyState = document.getElementById('emptyState');
             let items = notesData[currentSubjectId] || [];
